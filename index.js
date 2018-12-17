@@ -1,11 +1,10 @@
 
-const {SHA256} = require('crypto-js');
-const present = require('present');
+const SHA256 = require('crypto-js/sha256');
 
 class Block {
-  constructor(index, data, prevHash='') {
+  constructor(index, timestamp, data, prevHash='') {
     this.index = index;
-    this.timestamp = this.getTimestamp();
+    this.timestamp = timestamp;
     this.data = data;
     this.prevHash = prevHash;
     this.hash = this.calcHash();
@@ -13,15 +12,11 @@ class Block {
 
   calcHash() {
     return SHA256(
-      this.index,+
+      this.index+
       this.prevHash+
       this.timestamp+
       JSON.stringify(this.data)
     ).toString();
-  }
-
-  getTimestamp() {
-    return (""+present()).split('.')[0];
   }
 }
 
@@ -31,7 +26,7 @@ class Blockchain {
   }
 
   initChain() {
-    return new Block(0, 5, "0");
+    return new Block(0, "17/12/2018", "Root", "0");
   }
 
   getLast() {
@@ -43,9 +38,30 @@ class Blockchain {
     block.hash = block.calcHash();
     this.chain.push(block);
   }
+
+  isValid() {
+    for(let i=1; i<this.chain.length; i++) {
+      const cur = this.chain[i];
+      const prev = this.chain[i-1];
+
+      if(cur.hash!==cur.calcHash()) {
+        return false;
+      }
+      if(cur.prevHash!==prev.hash) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
 
-const sucukCoin = new Blockchain();
-sucukCoin.addBlock(new Block("1", 12));
+let sucukCoin = new Blockchain();
+sucukCoin.addBlock(new Block(1, "17/12/2018", {amount: 3}));
+sucukCoin.addBlock(new Block(2, "17/12/2018", {amount: 22}));
 
-console.log(JSON.stringify(sucukCoin, null, 4));
+
+console.log("Blockchain is valid: " + sucukCoin.isValid());
+
+sucukCoin.chain[1].data = {amount: 100};
+
+console.log("Blockchain is valid: " + sucukCoin.isValid());
