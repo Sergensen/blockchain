@@ -18,4 +18,4 @@ sucukCoin.addTransaction(transaction1);
 console.log("\n Mining...");
 sucukCoin.minePendingTransactions(myWalletAddress);
 
-console.log("\n Balance of"+myWalletAddress.substr(0, 40)+" is ", sucukCoin.getBalanceOfAddress(myWalletAddress));
+console.log("\n Balance of "+myWalletAddress.substr(0, 40)+"... is ", sucukCoin.getBalanceOfAddress(myWalletAddress));
